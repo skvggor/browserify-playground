@@ -7,6 +7,7 @@ var path = require('path'),
 	buffer = require('vinyl-buffer'),
 	uglify = require('gulp-uglify'),
 	stylus = require('gulp-stylus');
+	minifyHTML = require('gulp-minify-html');
 
 gulp.task('js', function() {
 	var files = [
@@ -22,14 +23,26 @@ gulp.task('js', function() {
 			.pipe(buffer())
 			.pipe(uglify())
 			.pipe(rename({ suffix: '-bundle' }))
-			.pipe(gulp.dest('./assets/js/dist'));
+			.pipe(gulp.dest('./public/assets/js'));
 	});
 
 	return eventStream.merge.apply(null, tasks);
 });
 
 gulp.task('css', function() {
-	gulp.src('./assets/stylus/styles.styl')
+	return gulp.src('./assets/stylus/styles.styl')
 		.pipe(stylus({ compress: true }))
-		.pipe(gulp.dest('./assets/css/dist'));
+		.pipe(gulp.dest('./public/assets/css'));
 });
+
+gulp.task('html', function() {
+	return gulp.src('./*.html')
+		.pipe(minifyHTML())
+		.pipe(gulp.dest('./public'));
+});
+
+gulp.task('default', [
+	'js',
+	'css',
+	'html'
+]);
