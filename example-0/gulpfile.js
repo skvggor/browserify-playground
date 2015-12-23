@@ -5,6 +5,7 @@ var path = require('path'),
 	source = require('vinyl-source-stream'),
 	eventStream = require('event-stream'),
 	buffer = require('vinyl-buffer'),
+	sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify'),
 	stylus = require('gulp-stylus');
 	minifyHTML = require('gulp-minify-html');
@@ -21,8 +22,10 @@ gulp.task('js', function() {
 			.bundle()
 			.pipe(source(path.basename(file)))
 			.pipe(buffer())
+			.pipe(sourcemaps.init({ loadMaps: true }))
 			.pipe(uglify())
 			.pipe(rename({ suffix: '-bundle' }))
+			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest('./public/assets/js'));
 	});
 
@@ -31,7 +34,9 @@ gulp.task('js', function() {
 
 gulp.task('css', function() {
 	return gulp.src('./assets/stylus/styles.styl')
+		.pipe(sourcemaps.init({ loadMaps: true }))
 		.pipe(stylus({ compress: true }))
+		.pipe(sourcemaps.write('./'))
 		.pipe(gulp.dest('./public/assets/css'));
 });
 

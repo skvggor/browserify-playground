@@ -9,7 +9,7 @@ $(function() {
 		texts.each(function() {
 			if (S($(this).text()).contains(name)) {
 				$(this).addClass('-bg-red');
-			};
+			}
 		});
 	}();
 });
