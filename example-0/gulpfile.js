@@ -41,8 +41,16 @@ gulp.task('html', function() {
 		.pipe(gulp.dest('./public'));
 });
 
-gulp.task('default', [
-	'js',
-	'css',
-	'html'
-]);
+// todo: plugin!
+var gulpTasks = function() {
+	var gulpTasks = gulp.tasks,
+		tasks = [];
+
+	for (var task in gulpTasks) {
+		tasks.push(task);
+	}
+
+	return tasks;
+};
+
+gulp.task('default', gulpTasks());
