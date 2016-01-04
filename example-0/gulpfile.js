@@ -7,14 +7,14 @@ var path = require('path'),
 	buffer = require('vinyl-buffer'),
 	sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify'),
-	stylus = require('gulp-stylus');
-	minifyHTML = require('gulp-minify-html');
+	stylus = require('gulp-stylus'),
+	minifyHTML = require('gulp-minify-html'),
+	watch = require('gulp-watch'),
+	connect = require('gulp-connect');
 
 gulp.task('js', function() {
 	var files = [
-
 		'./assets/js/index.js'
-
 	];
 
 	var tasks = files.map(function(file) {
@@ -26,7 +26,8 @@ gulp.task('js', function() {
 			.pipe(uglify())
 			.pipe(rename({ suffix: '-bundle' }))
 			.pipe(sourcemaps.write('./'))
-			.pipe(gulp.dest('./public/assets/js'));
+			.pipe(gulp.dest('./public/assets/js'))
+			.pipe(connect.reload());
 	});
 
 	return eventStream.merge.apply(null, tasks);
@@ -37,13 +38,28 @@ gulp.task('css', function() {
 		.pipe(sourcemaps.init({ loadMaps: true }))
 		.pipe(stylus({ compress: true }))
 		.pipe(sourcemaps.write('./'))
-		.pipe(gulp.dest('./public/assets/css'));
+		.pipe(gulp.dest('./public/assets/css'))
+		.pipe(connect.reload());
 });
 
 gulp.task('html', function() {
 	return gulp.src('./*.html')
 		.pipe(minifyHTML())
-		.pipe(gulp.dest('./public'));
+		.pipe(gulp.dest('./public'))
+		.pipe(connect.reload());
+});
+
+gulp.task('watch', function() {
+	gulp.watch('./assets/js/*.js', ['js']);
+	gulp.watch('./assets/stylus/*.styl', ['css']);
+	gulp.watch('./*.html', ['html']);
+});
+
+gulp.task('connect', function() {
+	connect.server({
+		root: './public',
+		livereload: true
+	});
 });
 
 // todo: plugin!
